@@ -1,0 +1,81 @@
+{%extends 'flatpages/default.html'%}
+{% load custom_filters %}
+{%block title%}
+Posts
+{%endblock title%}
+
+
+
+
+
+
+{%block content%}
+<div class="container">
+    <div class="container-fluid d-flex h-100 justify-content-center align-items-center p-3">
+        <form method="GET">
+            {{ filter.form }}
+            <!-- Форму от фильтров за нас сделает Django. А вот кнопку, увы, придётся делать самому -->
+            <input type="submit" value="Найти">
+        </form>
+
+    </div>
+    <div class="text-center mt-5">
+        <h1>Статьи</h1>
+        {% if posts %}
+        <table>
+            {% for post in filter.qs%}
+            <tr class="border">
+                <td class="border">
+                    <a class="lead" href="post/{{post.id}}">{{post.title|truncatechars:50|cansor}}</a>
+                    <!-- добавим ссылку на редактирование товара-->
+                    <a href="post_update/{{post.id}}" style="color: red;"><u> редактировать </u></a>
+                    <a href="post_delete/{{post.id}}" style="color: red;"><u> Удалить </u></a>
+                    <!-- добавим ссылку на удаление товара-->
+                </td>
+                <td class="border">
+                    <p class="lead">{{post.text|truncatechars:50|cansor}}</p>
+
+                </td>
+                <td>{{post.creationDate|date:'m.d.Y H:i'}}</td>
+            </tr>
+
+            {%endfor%}
+
+        </table>
+        {% else %}
+        <p class="lead">Нет статей</p>
+        {% endif %}
+    </div>
+</div>
+<div class="container-fluid d-flex h-100 justify-content-center align-items-center p-0">
+    {% if is_paginated %}
+
+    <!-- Если доступна предыдущая страница, то даём ссылку на неё и самую первую страницу -->
+    {% if page_obj.has_previous %}
+    <a href="?page=1">First</a>
+    <a href="?page={{ page_obj.previous_page_number }}">
+        <<< </a>
+            {% endif %}
+
+            <!-- Показываем только текущую страницу и ближайшие к ней, чтобы список не тянулся и не захламлял страницу -->
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <a>{{num}}</a>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <a href="?page={{ num }}">
+                {{ num }}
+
+    </a>
+    {% endif %}
+    {% endfor %}
+
+    <!-- Если есть следующая страница, то даём ссылку на неё и на самую последнюю страницу -->
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">>>></a>
+    <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+    {% endif %}
+
+    {% endif %}
+</div>
+
+
+{%endblock content%}
