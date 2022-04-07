@@ -27,16 +27,19 @@ Posts
             <tr class="border">
                 <td class="border">
                     <a class="lead" href="post/{{post.id}}">{{post.title|truncatechars:50|cansor}}</a>
+
+                    {% if not is_not_premium %}
                     <!-- добавим ссылку на редактирование товара-->
                     <a href="post_update/{{post.id}}" style="color: red;"><u> редактировать </u></a>
-                    <a href="post_delete/{{post.id}}" style="color: red;"><u> Удалить </u></a>
                     <!-- добавим ссылку на удаление товара-->
+                    <a href="post_delete/{{post.id}}" style="color: red;"><u> Удалить </u></a>
+                    {% endif%}
                 </td>
                 <td class="border">
                     <p class="lead">{{post.text|truncatechars:50|cansor}}</p>
 
                 </td>
-                <td>{{post.creationDate|date:'m.d.Y H:i'}}</td>
+                <td>{{post.creationDate|date:'d.m.Y H:i'}}</td>
             </tr>
 
             {%endfor%}

@@ -24,7 +24,6 @@ class PostFilter(FilterSet):
         new = (str(i.id), str(i.user.username))
         all_authors += (new,)
     all_authors += (('', 'ALL'),)
-    print(all_authors)
 
     author__in = django_filters.ChoiceFilter(
         field_name='author', lookup_expr='in', choices=all_authors)
