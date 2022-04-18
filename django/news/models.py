@@ -1,3 +1,4 @@
+from tkinter import CASCADE
 from unicodedata import category
 from django.db import models
 from django.contrib.auth.models import User
@@ -83,7 +84,7 @@ class PostCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.post.title.title()} ({self.category.categoryName.title()})'
+        return f'{self.pk}:{self.post.title.title()} ({self.category.categoryName.title()})'
 
 # Под каждой новостью/статьёй можно оставлять комментарии, поэтому необходимо организовать их способ хранения тоже.
 
@@ -112,3 +113,14 @@ class Comment(models.Model):
 
 class BanWords(models.Model):
     wordsList = models.TextField()
+
+
+class Subscriber(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'category')
+
+    def __str__(self) -> str:
+        return f'{self.user.username.title()} ({self.category.categoryName.title()})'

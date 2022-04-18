@@ -8,6 +8,9 @@ Post
 {%block content%}
 <div class="container">
     <div class="text-center mt-5">
+        {%if not is_subscribe %}
+        <a href="/subscribe/{{post.id}}">subscribe</a>
+        {%endif%}
         <h1>{{post.title|cansor}}</h1>
         <p class="lead">{{post.text|cansor}}</p>
         <p>{{post.creationDate|date:'d.m.Y H:i'}}</p>

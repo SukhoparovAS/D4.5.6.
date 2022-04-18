@@ -1,7 +1,11 @@
+from asyncio.windows_events import NULL
 from gettext import Catalog
+from unicodedata import category
+from webbrowser import get
 from django.shortcuts import render
 from django.views.generic import ListView, DeleteView, CreateView, DetailView, UpdateView
-from .models import Author, Category, Post
+from urllib3 import HTTPResponse
+from .models import Author, Category, Post, PostCategory, Subscriber
 from django.shortcuts import render
 from django.views import View  # импортируем простую вьюшку
 # импортируем класс, позволяющий удобно осуществлять постраничный вывод
@@ -9,6 +13,7 @@ from .filters import PostFilter
 from .forms import PostForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.shortcuts import redirect
 
 
 class AuthorList(ListView):
@@ -48,6 +53,24 @@ class PostDetail(DeleteView):
     model = Post
     template_name = 'post.html'
     context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # context['is_subscribe'] = True
+        post = Post.objects.get(pk=self.kwargs.get('pk'))
+        context['is_subscribe'] = Subscriber.objects.all().filter(
+            user=self.request.user).exists() and Subscriber.objects.all().filter(category=PostCategory.objects.get(post=post).category)
+        return context
+
+
+def subscribe(request, pk):
+
+    post = Post.objects.get(pk=pk)
+    category = PostCategory.objects.get(post=post)
+    sub = Subscriber(user=request.user,
+                     category=category.category)
+    sub.save()
+    return redirect(f'/post/{pk}')
 
 
 class PostUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
