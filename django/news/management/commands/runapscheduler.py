@@ -24,7 +24,6 @@ def my_job():
             creationDate__range=[datestart, datetime.now()], category=category)
 
         if posts:
-            print(posts, datestart)
 
             subscrube_list = Subscriber.objects.all().filter(
                 category=category).values_list('user__email', 'user__username')

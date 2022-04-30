@@ -40,7 +40,7 @@ def send_email(sender, instance, model, action, **kwargs):
                 msg.attach_alternative(
                     html_content, "text/html")  # добавляем html
 
-                msg.send()  # отсылаем
+               # msg.send()  # отсылаем
 
 
 @receiver(user_signed_up, dispatch_uid="some.unique.string.id.for.allauth.user_signed_up")

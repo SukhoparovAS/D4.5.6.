@@ -1,4 +1,5 @@
 {% load static %}
+{% load cache %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,27 +26,44 @@
                 aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="/admin">Admin</a></li>
+                    {% if is_authenticated %}
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="/admin">{{user}}</a></li>
+                    {%endif%}
+                    {% if not is_authenticated %}
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                            href="/accounts/login/">Вход/Регистрация</a></li>
+                    {%endif%}
+                    {% if is_authenticated %}
                     {% if not is_not_premium %}
                     <li class="nav-item"><a class="nav-link" href="/create">Создать статью</a></li>
                     {% endif %}
-                    <li class="nav-item"><a class="nav-link" href="/sign/logout/">Выйти</a></li>
+                    {%endif%}
+
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Категории</a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            {% cache 10 header %}
+                            {%for category in categories%}
+                            <li><a class="dropdown-item" href="/category/{{category.id}}">{{category.categoryName}}</a>
+                            </li>
+                            {%endfor%}
+                            {% endcache %}
+                        </ul>
+                    </li>
+                    {% if is_authenticated %}
                     {% if is_not_premium %}
                     <li class="nav-item"><a class="nav-link" href="/sign/upgrade/">Стать автором</a></li>
                     {% endif %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">Dropdown</a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li>
-                                <hr class="dropdown-divider" />
-                            </li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </li>
+                    {%endif%}
+
+                    {%if is_authenticated%}
+                    <li class="nav-item"><a class="nav-link" href="/sign/logout/">Выйти</a></li>
+                    {%endif%}
+
                 </ul>
+
             </div>
         </div>
     </nav>
